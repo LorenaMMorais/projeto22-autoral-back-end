@@ -1,0 +1,19 @@
+{
+  "name": "projeto22-autoral-back-end",
+  "version": "1.0.0",
+  "description": "Site do restaurante Sabores do Pará, incluindo um sistema próprio de gerenciamento de pedidos e atendimentos. Este sistema conta serviços de atendimento no restaurante que os colaborados usarão para gerenciar os pedidos, e também com serviços online, onde os clientes poderão fazer o pedido, para entrega ou retirada no restaurante.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LorenaMMorais/projeto22-autoral-back-end.git"
+  },
+  "author": "Lorena Morais",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LorenaMMorais/projeto22-autoral-back-end/issues"
+  },
+  "homepage": "https://github.com/LorenaMMorais/projeto22-autoral-back-end#readme"
+}
