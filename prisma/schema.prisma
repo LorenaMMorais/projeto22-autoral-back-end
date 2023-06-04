@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model customers {
+  id           Int            @id @default(autoincrement())
+  user_id      Int
+  phone        String         @db.VarChar(20)
+  users        users          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  delivery     delivery[]
+  orders       orders[]
+  reservations reservations[]
+}
+
+model delivery {
+  id                     Int        @id @default(autoincrement())
+  customer_id            Int?
+  delivery_address       String
+  pickup_from_restaurant Boolean?   @default(false)
+  delivery_date          DateTime?  @db.Timestamp(6)
+  status                 String     @db.VarChar(20)
+  customers              customers? @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model employees {
+  id      Int     @id @default(autoincrement())
+  user_id Int
+  users   users  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model foods {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(100)
+  description String
+  quantity    Int
+  price       Decimal       @db.Decimal(10, 2)
+  order_items order_items[]
+}
+
+model order_items {
+  id         Int     @id @default(autoincrement())
+  order_id   Int
+  food_id    Int
+  quantity   Int
+  unit_price Decimal @db.Decimal(10, 2)
+  foods      foods   @relation(fields: [food_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  orders     orders  @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model orders {
+  id          Int           @id @default(autoincrement())
+  customer_id Int
+  order_date  DateTime      @default(now()) @db.Timestamp(6)
+  total       Decimal       @db.Decimal(10, 2)
+  type        String        @db.VarChar(20)
+  order_items order_items[]
+  customers   customers     @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payments    payments[]
+}
+
+model payments {
+  id             Int       @id @default(autoincrement())
+  order_id       Int
+  payment_method String    @db.VarChar(100)
+  amount         Decimal   @db.Decimal(10, 2)
+  payment_date   DateTime  @default(now()) @db.Timestamp(6)
+  orders         orders    @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model reservations {
+  id               Int                      @id @default(autoincrement())
+  customer_id      Int
+  table_id         Int
+  reservation_date DateTime                 @db.Timestamp(6)
+  duration         Unsupported("interval")?
+  notes            String
+  customers        customers               @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tables           tables                  @relation(fields: [table_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model tables {
+  id           Int            @id @default(autoincrement())
+  number       Int
+  capacity     Int
+  reservations reservations[]
+}
+
+model users {
+  id         Int          @id @default(autoincrement())
+  email      String       @unique @db.VarChar(255)
+  password   String       @db.VarChar(255)
+  role       Boolean
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  session    session[]  
+  customers customers[]
+  employees employees[]
+}
+
+model session {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
